@@ -1,0 +1,257 @@
+W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use SSE4.1 instructions, but these are available on your machine and could speed up CPU computations.
+W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use SSE4.2 instructions, but these are available on your machine and could speed up CPU computations.
+W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use AVX instructions, but these are available on your machine and could speed up CPU computations.
+W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use AVX2 instructions, but these are available on your machine and could speed up CPU computations.
+W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use FMA instructions, but these are available on your machine and could speed up CPU computations.
+/System/Library/Frameworks/Python.framework/Versions/2.7/Extras/lib/python/scipy/sparse/coo.py:200: VisibleDeprecationWarning: `rank` is deprecated; use the `ndim` attribute or function instead. To find the rank of a matrix see `numpy.linalg.matrix_rank`.
+  if np.rank(self.data) != 1 or np.rank(self.row) != 1 or np.rank(self.col) != 1:
+starting epoch 1
+loss: 2.20284073353, accu: 0.44296875
+loss: 2.05552597046, accu: 0.458203125
+epoch 1, loss : 1.96487299983, accu : 0.472956730769
+***test***
+loss : 1.5661700964, accu : 0.554878056049
+[[ 29   0   0   1   0   0  14]
+ [  0  13   0   0   0  23   7]
+ [  0   0   0   0   0   0  37]
+ [  0   0   0   0   0   0 102]
+ [  0   0   0   0   0   0  91]
+ [  0   0   0   0   0   1  90]
+ [  0   0   0   0   0   0 412]]
+starting epoch 2
+loss: 1.49408296943, accu: 0.58046875
+loss: 1.37808565795, accu: 0.63671875
+epoch 2, loss : 1.30530942289, accu : 0.665564903846
+***test***
+loss : 1.01708507538, accu : 0.785365879536
+[[ 44   0   0   0   0   0   0]
+ [  0  43   0   0   0   0   0]
+ [  0   0   1   0   0  34   2]
+ [  0   0   0  53   0   0  49]
+ [  0   0   0   2   0   0  89]
+ [  0   0   0   0   0  91   0]
+ [  0   0   0   0   0   0 412]]
+starting epoch 3
+loss: 0.999837172031, accu: 0.7828125
+loss: 0.931219056249, accu: 0.808984375
+epoch 3, loss : 0.8880510697, accu : 0.825120192308
+***test***
+loss : 0.724398732185, accu : 0.853658556938
+[[ 44   0   0   0   0   0   0]
+ [  0  43   0   0   0   0   0]
+ [  0   0   9   0   0  28   0]
+ [  0   0   0  96   0   0   6]
+ [  0   0   0   0   5   0  86]
+ [  0   0   0   0   0  91   0]
+ [  0   0   0   0   0   0 412]]
+starting epoch 4
+loss: 0.711191952229, accu: 0.89765625
+loss: 0.666239739954, accu: 0.912109375
+epoch 4, loss : 0.640732733103, accu : 0.922175480769
+***test***
+loss : 0.546408593655, accu : 0.945121943951
+[[ 44   0   0   0   0   0   0]
+ [  0  43   0   0   0   0   0]
+ [  0   0  33   0   0   4   0]
+ [  0   0   0 102   0   0   0]
+ [  0   0   0   0  50   0  41]
+ [  0   0   0   0   0  91   0]
+ [  0   0   0   0   0   0 412]]
+starting epoch 5
+loss: 0.532826423645, accu: 0.96328125
+loss: 0.501753168553, accu: 0.97109375
+epoch 5, loss : 0.486550709376, accu : 0.973858173077
+Model saved in file: ../model
+***test***
+loss : 0.426386117935, accu : 0.993902444839
+[[ 44   0   0   0   0   0   0]
+ [  0  43   0   0   0   0   0]
+ [  0   0  35   0   0   2   0]
+ [  0   0   0 102   0   0   0]
+ [  0   0   0   0  88   0   3]
+ [  0   0   0   0   0  91   0]
+ [  0   0   0   0   0   0 412]]
+starting epoch 6
+loss: 0.420625016093, accu: 0.9859375
+loss: 0.401239212602, accu: 0.990234375
+epoch 6, loss : 0.391126809212, accu : 0.991286057692
+***test***
+loss : 0.35077059269, accu : 0.998780488968
+[[ 44   0   0   0   0   0   0]
+ [  0  43   0   0   0   0   0]
+ [  0   0  36   0   0   1   0]
+ [  0   0   0 102   0   0   0]
+ [  0   0   0   0  91   0   0]
+ [  0   0   0   0   0  91   0]
+ [  0   0   0   0   0   0 412]]
+starting epoch 7
+loss: 0.346264719963, accu: 0.9984375
+loss: 0.335166826844, accu: 0.9984375
+epoch 7, loss : 0.329491214683, accu : 0.998197115385
+***test***
+loss : 0.307467192411, accu : 1.0
+[[ 44   0   0   0   0   0   0]
+ [  0  43   0   0   0   0   0]
+ [  0   0  37   0   0   0   0]
+ [  0   0   0 102   0   0   0]
+ [  0   0   0   0  91   0   0]
+ [  0   0   0   0   0  91   0]
+ [  0   0   0   0   0   0 412]]
+starting epoch 8
+loss: 0.302268376946, accu: 1.0
+loss: 0.294333401322, accu: 0.999609375
+epoch 8, loss : 0.290660748115, accu : 0.999699519231
+***test***
+loss : 0.277616798878, accu : 1.0
+[[ 44   0   0   0   0   0   0]
+ [  0  43   0   0   0   0   0]
+ [  0   0  37   0   0   0   0]
+ [  0   0   0 102   0   0   0]
+ [  0   0   0   0  91   0   0]
+ [  0   0   0   0   0  91   0]
+ [  0   0   0   0   0   0 412]]
+starting epoch 9
+loss: 0.274234096706, accu: 1.0
+loss: 0.267510473728, accu: 0.999609375
+epoch 9, loss : 0.264591119037, accu : 0.999699519231
+***test***
+loss : 0.257957458496, accu : 1.0
+[[ 44   0   0   0   0   0   0]
+ [  0  43   0   0   0   0   0]
+ [  0   0  37   0   0   0   0]
+ [  0   0   0 102   0   0   0]
+ [  0   0   0   0  91   0   0]
+ [  0   0   0   0   0  91   0]
+ [  0   0   0   0   0   0 412]]
+starting epoch 10
+loss: 0.252698479593, accu: 1.0
+loss: 0.246714268997, accu: 1.0
+epoch 10, loss : 0.2443081109, accu : 1.0
+Model saved in file: ../model
+***test***
+loss : 0.244805037975, accu : 0.998780488968
+[[ 44   0   0   0   0   0   0]
+ [  0  43   0   0   0   0   0]
+ [  0   0  37   0   0   0   0]
+ [  0   0   0 102   0   0   0]
+ [  0   0   0   0  90   0   1]
+ [  0   0   0   0   0  91   0]
+ [  0   0   0   0   0   0 412]]
+starting epoch 11
+loss: 0.239329586178, accu: 1.0
+loss: 0.232506110147, accu: 1.0
+epoch 11, loss : 0.230111035877, accu : 1.0
+***test***
+loss : 0.230751559138, accu : 0.998780488968
+[[ 44   0   0   0   0   0   0]
+ [  0  43   0   0   0   0   0]
+ [  0   0  37   0   0   0   0]
+ [  0   0   0 102   0   0   0]
+ [  0   0   0   0  90   0   1]
+ [  0   0   0   0   0  91   0]
+ [  0   0   0   0   0   0 412]]
+starting epoch 12
+loss: 0.221317135543, accu: 1.0
+loss: 0.216159541532, accu: 1.0
+epoch 12, loss : 0.21433014394, accu : 1.0
+***test***
+loss : 0.20916184783, accu : 1.0
+[[ 44   0   0   0   0   0   0]
+ [  0  43   0   0   0   0   0]
+ [  0   0  37   0   0   0   0]
+ [  0   0   0 102   0   0   0]
+ [  0   0   0   0  91   0   0]
+ [  0   0   0   0   0  91   0]
+ [  0   0   0   0   0   0 412]]
+starting epoch 13
+loss: 0.205196759105, accu: 1.0
+loss: 0.202025834471, accu: 1.0
+epoch 13, loss : 0.200677989194, accu : 1.0
+***test***
+loss : 0.196792781353, accu : 1.0
+[[ 44   0   0   0   0   0   0]
+ [  0  43   0   0   0   0   0]
+ [  0   0  37   0   0   0   0]
+ [  0   0   0 102   0   0   0]
+ [  0   0   0   0  91   0   0]
+ [  0   0   0   0   0  91   0]
+ [  0   0   0   0   0   0 412]]
+starting epoch 14
+loss: 0.193478360772, accu: 1.0
+loss: 0.190713988245, accu: 1.0
+epoch 14, loss : 0.189514777981, accu : 1.0
+***test***
+loss : 0.186203360558, accu : 1.0
+[[ 44   0   0   0   0   0   0]
+ [  0  43   0   0   0   0   0]
+ [  0   0  37   0   0   0   0]
+ [  0   0   0 102   0   0   0]
+ [  0   0   0   0  91   0   0]
+ [  0   0   0   0   0  91   0]
+ [  0   0   0   0   0   0 412]]
+starting epoch 15
+loss: 0.183065228164, accu: 1.0
+loss: 0.180496334285, accu: 1.0
+epoch 15, loss : 0.179416076495, accu : 1.0
+Model saved in file: ../model
+***test***
+loss : 0.176333665848, accu : 1.0
+[[ 44   0   0   0   0   0   0]
+ [  0  43   0   0   0   0   0]
+ [  0   0  37   0   0   0   0]
+ [  0   0   0 102   0   0   0]
+ [  0   0   0   0  91   0   0]
+ [  0   0   0   0   0  91   0]
+ [  0   0   0   0   0   0 412]]
+starting epoch 16
+loss: 0.173486149311, accu: 1.0
+loss: 0.171121729165, accu: 1.0
+epoch 16, loss : 0.170140939263, accu : 1.0
+***test***
+loss : 0.167212098837, accu : 1.0
+[[ 44   0   0   0   0   0   0]
+ [  0  43   0   0   0   0   0]
+ [  0   0  37   0   0   0   0]
+ [  0   0   0 102   0   0   0]
+ [  0   0   0   0  91   0   0]
+ [  0   0   0   0   0  91   0]
+ [  0   0   0   0   0   0 412]]
+starting epoch 17
+loss: 0.164691083878, accu: 1.0
+loss: 0.162481013685, accu: 1.0
+epoch 17, loss : 0.161545747461, accu : 1.0
+***test***
+loss : 0.158620536327, accu : 1.0
+[[ 44   0   0   0   0   0   0]
+ [  0  43   0   0   0   0   0]
+ [  0   0  37   0   0   0   0]
+ [  0   0   0 102   0   0   0]
+ [  0   0   0   0  91   0   0]
+ [  0   0   0   0   0  91   0]
+ [  0   0   0   0   0   0 412]]
+starting epoch 18
+loss: 0.156504295766, accu: 1.0
+loss: 0.154455334693, accu: 1.0
+epoch 18, loss : 0.153580254374, accu : 1.0
+***test***
+loss : 0.150530457497, accu : 1.0
+[[ 44   0   0   0   0   0   0]
+ [  0  43   0   0   0   0   0]
+ [  0   0  37   0   0   0   0]
+ [  0   0   0 102   0   0   0]
+ [  0   0   0   0  91   0   0]
+ [  0   0   0   0   0  91   0]
+ [  0   0   0   0   0   0 412]]
+starting epoch 19
+loss: 0.148800034076, accu: 1.0
+loss: 0.146914647892, accu: 1.0
+epoch 19, loss : 0.146105397779, accu : 1.0
+***test***
+loss : 0.14391246438, accu : 1.0
+[[ 44   0   0   0   0   0   0]
+ [  0  43   0   0   0   0   0]
+ [  0   0  37   0   0   0   0]
+ [  0   0   0 102   0   0   0]
+ [  0   0   0   0  91   0   0]
+ [  0   0   0   0   0  91   0]
+ [  0   0   0   0   0   0 412]]
