@@ -215,6 +215,12 @@ class SignalModModel(object):
         final_outputs = tf.matmul(real_outputs, FC1_W) + FC1_b
         tf.add_to_collection('total_loss', 0.5 * self.config.l2_reg_lambda * tf.nn.l2_loss(FC1_W))
 
+        # 加入softmax层输出
+        FC2_W = tf.get_variable('FC2_W', shape=[self.config.hidden_size, self.config.label_size],
+                                initializer=xavier_initializer())
+        FC2_b = tf.Variable(initial_value=tf.zeros([self.config.label_size]), name='FC2_b')
+        final_outputs = tf.matmul(final_outputs, FC2_W) + FC2_b
+
         return final_outputs
 
 
