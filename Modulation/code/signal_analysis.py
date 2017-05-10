@@ -6,41 +6,77 @@ from copy import deepcopy
 from matplotlib import pyplot as plt
 import numpy as np
 from sklearn.model_selection import train_test_split
+reload(sys)
 
-def drawModulation(filepath):
+
+def drawModulation(dirpath, rownum=200):
     """信号文件绘图
 
     :param filepath: 需要显示绘图的信号文件路径
     :return: None
     """
 
-    sampleFreq = 25
+    plt.figure(1)
+    filepaths = os.listdir(dirpath)
+    fileorder = 1
+    useful_filepaths = [f for f in filepaths if f.startswith('parse_mod')]
+    for filepath in useful_filepaths:
+        count = np.random.randint(1, rownum + 1)
+        with open(dirpath + '/' + filepath, 'rb') as fr:
+            x = list()
+            vals = list()
+            name = filepath
+            for i, line in enumerate(fr):
+                if i < count:
+                    continue
+                if i > count:
+                    break
+                vals = line.strip().split('\t')
+                vals = map(float, vals)
+                x = range(len(vals))
+            plt.subplot(2 * len(useful_filepaths), 1, fileorder * 2 - 1)
+            plt.plot(x, vals, color = ((fileorder * 20 + 25) % 255 / 255.,
+                                         (fileorder * 5 + 35) % 255 / 255.,
+                                         (fileorder * 30 + 45) % 255 / 255.))
+            plt.xlabel('symbol number')
+            plt.ylabel('signal amplitude')
+            plt.title(name)
+        fileorder += 1
+    plt.show()
+
+
+def drawMixSignal(filepath, sample=5):
+    """信号文件绘图
+
+    :param filepath: 需要显示绘图的信号文件路径
+    :return: None
+    """
+
+    plt.figure(1)
     with open(filepath, 'rb') as fr:
-        x = list()
-        y = list()
-        for line in fr:
+        rowNumber = sum(1 for _ in fr)
+    with open(filepath, 'rb') as fr:
+        sampleSignals = set(np.random.choice(range(rowNumber), sample, replace=False))
+        rowOrder = 1
+        for i, line in enumerate(fr):
+            if i not in sampleSignals:
+                continue
             vals = line.strip().split('\t')
             vals = map(float, vals)
-            x.append(vals[0])
-            y.append(vals[1:])
-        y = zip(*y)
-        y = map(lambda row: row[::sampleFreq], y)
-        x = x[::sampleFreq]
-        plt.figure(1)
-        for i, signal in enumerate(y):
-            plt.plot(x, signal, color = ((i * 20 + 25) % 255 / 255.,
-                                         (i * 5 + 35) % 255 / 255.,
-                                         (i * 30 + 45) % 255 / 255.))
-            plt.xlabel('time')
-            plt.ylabel('signal amplitude')
-            plt.title(str(i * 5 + 5) + 'dB')
-            plt.show()
+            x = range(len(vals))
+            plt.subplot(sample, 1, rowOrder)
+            plt.plot(x, vals, color = ((rowOrder * 20 + 25) % 255 / 255.,
+                                         (rowOrder * 5 + 35) % 255 / 255.,
+                                         (rowOrder * 30 + 45) % 255 / 255.))
+            rowOrder += 1
+    plt.show()
+
 
 def mixSignalAndTagging(dirpath='../data', savepath='../data/mixSignals.txt', modeSize=[]):
     """信号混叠和标注
 
     对已有的信号进行混叠.
-    1-7分别对应：4ASK、QPSK、2FSK、4ASK+QPSK、4ASK+2FSK、QPSK+2FSK、4ASK+QPSK+2FSK
+    1-7分别对应：2ASK、QPSK、2FSK、2ASK+QPSK、2ASK+2FSK、QPSK+2FSK、2ASK+QPSK+2FSK
 
     :param dirpath: signal path
     :param modeSize: the sample size in each mode, from `1` to `n`
@@ -162,6 +198,7 @@ def split(filepath):
 
 
 if __name__ == '__main__':
-    # drawModulation('../data/mod_QPSK.txt')
-    split('../data/mixSignals.txt')
-    # mixSignalAndTagging('../data', '../data/mixSignals.txt', [600, 1500, 2000])
+    # drawModulation('../data/5dB')
+    drawMixSignal('../data/50dB/mixSignals.txt')
+    # mixSignalAndTagging('../data/5dB', '../data/5dB/mixSignals.txt', [600, 1500, 2000])
+    # split('../data/5dB/mixSignals.txt')

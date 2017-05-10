@@ -3,6 +3,8 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.contrib.layers import xavier_initializer
 from sklearn.metrics import confusion_matrix
+from datetime import datetime
+
 
 def one_hot(value, dim):
     """
@@ -26,16 +28,16 @@ class Config(object):
     """
 
     # 1Dconv configs
-    conv1_filter_sizes = [50]
-    conv1_filter_num = 32
-    conv1_padding = 'VALID'
-    conv2_filter_sizes = [40]
+    conv1_filter_sizes = [3]
+    conv1_filter_num = 64
+    conv1_padding = 'SAME'
+    conv2_filter_sizes = [3]
     conv2_filter_num = 16
-    conv2_padding = 'VALID'
+    conv2_padding = 'SAME'
 
     # pooling configs
-    conv1_pool_sizes = [10]
-    conv2_pool_sizes = [10]
+    conv1_pool_sizes = [2]
+    conv2_pool_sizes = [2]
 
     # params
     l2_reg_lambda = 1e-2
@@ -44,9 +46,9 @@ class Config(object):
     # others
     batch_size = 64
     epochs = 20
-    sequence_length = 10240
+    sequence_length = 128
     sequence_width = 1
-    label_size = 7
+    label_size = 11
 
     # config
     batch_show = 20
@@ -165,16 +167,18 @@ class SignalModModel(object):
                     padding=self.config.conv1_padding)
                 pool1_out = tf.nn.tanh(pool1_out + pool1_b)
 
+                dropout_pool1_out = tf.nn.dropout(pool1_out, self.keep_prob)
+
                 # 第一层的filter的W和b
                 conv2_W = tf.get_variable('conv2_W',
-                    shape=[self.config.conv2_filter_sizes[i], pool1_out.get_shape()[2], pool1_out.get_shape()[3], self.config.conv2_filter_num],
+                    shape=[self.config.conv2_filter_sizes[i], dropout_pool1_out.get_shape()[2], dropout_pool1_out.get_shape()[3], self.config.conv2_filter_num],
                     initializer=tf.truncated_normal_initializer(.0, .1))
                 conv2_b = tf.get_variable('conv2_b',
                     initializer=tf.constant(0.1, shape=[self.config.conv2_filter_num]))
                 # 卷积
                 conv2_out = tf.nn.relu(
                     (tf.nn.conv2d(
-                    pool1_out, conv2_W, [1, 1, 1, 1], padding=self.config.conv2_padding) + conv2_b))
+                    dropout_pool1_out, conv2_W, [1, 1, 1, 1], padding=self.config.conv2_padding) + conv2_b))
                 # 池化
                 pool2_b = tf.get_variable('pool2_b',
                     initializer=tf.constant(0.1, shape=[self.config.conv2_filter_num]))
@@ -182,8 +186,9 @@ class SignalModModel(object):
                     [1, self.config.conv2_pool_sizes[i], 1, 1], [1, self.config.conv2_pool_sizes[i], 1, 1],
                     padding=self.config.conv1_padding)
                 pool2_out = tf.nn.tanh(pool2_out + pool2_b)
+                dropout_pool2_out = tf.nn.dropout(pool2_out, self.keep_prob)
 
-                outputs.append(pool2_out)
+                outputs.append(dropout_pool2_out)
 
                 # 加入正则项
                 tf.add_to_collection('total_loss', 0.5 * self.config.l2_reg_lambda * tf.nn.l2_loss(conv1_W))
@@ -297,5 +302,5 @@ class SignalModModel(object):
 
 
 if __name__ == '__main__':
-    model = SignalModModel(Config(), '../log', '../model/model.pkg')
-    model.fit(datapath='../data/5dB/train_mixSignals.txt', test_datapath='../data/5dB/test_mixSignals.txt')
+    model = SignalModModel(Config(), '../log_{0}', '../model/model_{0}.pkg'.format(datetime.strftime(datetime.now(), '%Y%m%d%H')))
+    model.fit(datapath='../rml_data/RML2016.10a_dict_real_train.dat', test_datapath='../rml_data/RML2016.10a_dict_real_test.dat')
