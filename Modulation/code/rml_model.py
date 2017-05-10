@@ -35,7 +35,7 @@ class Config(object):
     conv1_padding = 'SAME'
     conv2_filter_sizes = [3]
     conv2_filter_num = 16
-    conv2_padding = 'SAME'
+    conv2_padding = 'VALID'
 
     # pooling configs
     conv1_pool_sizes = [2]
@@ -177,7 +177,7 @@ class SignalModModel(object):
 
                 # 第一层的filter的W和b
                 conv2_W = tf.get_variable('conv2_W',
-                    shape=[self.config.conv2_filter_sizes[i], conv1_out.get_shape()[2], conv1_out.get_shape()[3], self.config.conv2_filter_num],
+                    shape=[self.config.conv2_filter_sizes[i], self.config.sequence_width, conv1_out.get_shape()[3], self.config.conv2_filter_num],
                     initializer=tf.truncated_normal_initializer(.0, .1))
                 conv2_b = tf.get_variable('conv2_b',
                     initializer=tf.constant(0.1, shape=[self.config.conv2_filter_num]))
