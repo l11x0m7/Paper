@@ -41,6 +41,9 @@ class Config(object):
     conv1_pool_sizes = [2]
     conv2_pool_sizes = [2]
 
+    # dense configs
+    hidden_size = 128
+
     # params
     l2_reg_lambda = 1e-2
     learning_rate = 1e-3
@@ -154,7 +157,7 @@ class SignalModModel(object):
             with tf.variable_scope('filter{}'.format(filter_size)):
                 # 第一层的filter的W和b
                 conv1_W = tf.get_variable('conv1_W',
-                    shape=[filter_size, self.config.sequence_width, 1, self.config.conv1_filter_num],
+                    shape=[filter_size, 1, 1, self.config.conv1_filter_num],
                     initializer=tf.truncated_normal_initializer(.0, .1))
                 conv1_b = tf.get_variable('conv1_b',
                     initializer=tf.constant(0.1, shape=[self.config.conv1_filter_num]))
@@ -163,35 +166,35 @@ class SignalModModel(object):
                     (tf.nn.conv2d(
                     inputs, conv1_W, [1, 1, 1, 1], padding=self.config.conv1_padding) + conv1_b))
                 # 池化
-                pool1_b = tf.get_variable('pool1_b',
-                    initializer=tf.constant(0.1, shape=[self.config.conv1_filter_num]))
-                pool1_out = tf.nn.max_pool(conv1_out,
-                    [1, self.config.conv1_pool_sizes[i], 1, 1], [1, self.config.conv1_pool_sizes[i], 1, 1],
-                    padding=self.config.conv1_padding)
-                pool1_out = tf.nn.tanh(pool1_out + pool1_b)
+                # pool1_b = tf.get_variable('pool1_b',
+                #     initializer=tf.constant(0.1, shape=[self.config.conv1_filter_num]))
+                # pool1_out = tf.nn.max_pool(conv1_out,
+                #     [1, self.config.conv1_pool_sizes[i], 1, 1], [1, self.config.conv1_pool_sizes[i], 1, 1],
+                #     padding=self.config.conv1_padding)
+                # pool1_out = tf.nn.tanh(pool1_out + pool1_b)
 
-                dropout_pool1_out = tf.nn.dropout(pool1_out, self.keep_prob)
+                # dropout_pool1_out = tf.nn.dropout(conv1_out, self.keep_prob)
 
                 # 第一层的filter的W和b
                 conv2_W = tf.get_variable('conv2_W',
-                    shape=[self.config.conv2_filter_sizes[i], dropout_pool1_out.get_shape()[2], dropout_pool1_out.get_shape()[3], self.config.conv2_filter_num],
+                    shape=[self.config.conv2_filter_sizes[i], conv1_out.get_shape()[2], conv1_out.get_shape()[3], self.config.conv2_filter_num],
                     initializer=tf.truncated_normal_initializer(.0, .1))
                 conv2_b = tf.get_variable('conv2_b',
                     initializer=tf.constant(0.1, shape=[self.config.conv2_filter_num]))
                 # 卷积
                 conv2_out = tf.nn.relu(
                     (tf.nn.conv2d(
-                    dropout_pool1_out, conv2_W, [1, 1, 1, 1], padding=self.config.conv2_padding) + conv2_b))
+                    conv1_out, conv2_W, [1, 1, 1, 1], padding=self.config.conv2_padding) + conv2_b))
                 # 池化
-                pool2_b = tf.get_variable('pool2_b',
-                    initializer=tf.constant(0.1, shape=[self.config.conv2_filter_num]))
-                pool2_out = tf.nn.max_pool(conv2_out,
-                    [1, self.config.conv2_pool_sizes[i], 1, 1], [1, self.config.conv2_pool_sizes[i], 1, 1],
-                    padding=self.config.conv1_padding)
-                pool2_out = tf.nn.tanh(pool2_out + pool2_b)
-                dropout_pool2_out = tf.nn.dropout(pool2_out, self.keep_prob)
+                # pool2_b = tf.get_variable('pool2_b',
+                #     initializer=tf.constant(0.1, shape=[self.config.conv2_filter_num]))
+                # pool2_out = tf.nn.max_pool(conv2_out,
+                #     [1, self.config.conv2_pool_sizes[i], 1, 1], [1, self.config.conv2_pool_sizes[i], 1, 1],
+                #     padding=self.config.conv1_padding)
+                # pool2_out = tf.nn.tanh(pool2_out + pool2_b)
+                dropout_conv2_out = tf.nn.dropout(conv2_out, self.keep_prob)
 
-                outputs.append(dropout_pool2_out)
+                outputs.append(dropout_conv2_out)
 
                 # 加入正则项
                 tf.add_to_collection('total_loss', 0.5 * self.config.l2_reg_lambda * tf.nn.l2_loss(conv1_W))
@@ -206,11 +209,11 @@ class SignalModModel(object):
                              'rather than {}'.format(len(self.config.conv2_filter_sizes)))
 
         # 加入FC层输出
-        FC_W = tf.get_variable('FC_W', shape=[real_outputs.get_shape()[1], self.config.label_size],
+        FC1_W = tf.get_variable('FC_W', shape=[real_outputs.get_shape()[1], self.config.hidden_size],
                 initializer=xavier_initializer())
-        FC_b = tf.Variable(initial_value=tf.zeros([self.config.label_size]), name='FC_b')
-        final_outputs = tf.matmul(real_outputs, FC_W) + FC_b
-        tf.add_to_collection('total_loss', 0.5 * self.config.l2_reg_lambda * tf.nn.l2_loss(FC_W))
+        FC1_b = tf.Variable(initial_value=tf.zeros([self.config.hidden_size]), name='FC_b')
+        final_outputs = tf.matmul(real_outputs, FC1_W) + FC1_b
+        tf.add_to_collection('total_loss', 0.5 * self.config.l2_reg_lambda * tf.nn.l2_loss(FC1_W))
 
         return final_outputs
 
