@@ -39,9 +39,9 @@ def splitSignal(filepath):
             label = label_transformer[mode]
             X_train, X_test = train_test_split(array[(mode, snr)], test_size=0.2)
             for i, train in enumerate(X_train):
-                fwtrain.write('\t'.join([json.dumps(train.tolist()), str(label)]) + '\n')
+                fwtrain.write('\t'.join([json.dumps(train.tolist()), str(label), str(snr)]) + '\n')
             for i, test in enumerate(X_test):
-                fwtest.write('\t'.join([json.dumps(test.tolist()), str(label)]) + '\n')
+                fwtest.write('\t'.join([json.dumps(test.tolist()), str(label), str(snr)]) + '\n')
             print '{} {} done!'.format(mode, snr)
         fwtrain.close()
         fwtest.close()

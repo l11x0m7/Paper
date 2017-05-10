@@ -101,7 +101,10 @@ class SignalModModel(object):
             for i, line in enumerate(fr):
                 items = line.strip().split('\t')
                 signal = json.loads(items[0])
-                label = int(items[-1])
+                label = int(items[1])
+                snr = int(items[2])
+                if snr != 18:
+                    continue
                 label = one_hot(label, self.config.label_size)
                 x.append(signal)
                 y.append(label)
@@ -122,7 +125,10 @@ class SignalModModel(object):
             for i, line in enumerate(fr):
                 items = line.strip().split('\t')
                 signal = json.loads(items[0])
-                label = int(items[-1])
+                label = int(items[1])
+                snr = int(items[2])
+                if snr != 18:
+                    continue
                 label = one_hot(label, self.config.label_size)
                 batch_x.append(signal)
                 batch_y.append(label)
