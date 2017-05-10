@@ -3,6 +3,7 @@ import pickle
 import numpy as np
 from matplotlib import pyplot as plt
 from sklearn.model_selection import train_test_split
+import json
 
 label_transformer = {'QPSK': 0, 'AM-DSB': 1, 'AM-SSB': 2,
                      'PAM4': 3, 'WBFM': 4, 'GFSK': 5, 'CPFSK': 6,
@@ -38,9 +39,9 @@ def splitSignal(filepath):
             label = label_transformer[mode]
             X_train, X_test = train_test_split(array[(mode, snr)], test_size=0.2)
             for i, train in enumerate(X_train):
-                fwtrain.write('\t'.join(map(str, train.tolist() + [label])) + '\n')
+                fwtrain.write('\t'.join([json.dumps(train.tolist()), str(label)]) + '\n')
             for i, test in enumerate(X_test):
-                fwtest.write('\t'.join(map(str, test.tolist() + [label])) + '\n')
+                fwtest.write('\t'.join([json.dumps(test.tolist()), str(label)]) + '\n')
             print '{} {} done!'.format(mode, snr)
         fwtrain.close()
         fwtest.close()
@@ -51,4 +52,4 @@ if __name__ == '__main__':
     # rmlParser('../rml_data/RML2016.10a_dict.dat')
     # getRealSignal('../rml_data/RML2016.10a_dict.dat', '../rml_data/RML2016.10a_dict_real.dat')
     # mixSignal('../rml_data/RML2016.10a_dict_real.dat', '../rml_data/dict_mixSignal.dat')
-    splitSignal('../rml_data/RML2016.10a_dict_real.dat')
+    splitSignal('../rml_data/RML2016.10a_dict.dat')

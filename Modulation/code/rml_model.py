@@ -1,9 +1,11 @@
 # -*- encoding:utf-8 -*-
 import numpy as np
 import tensorflow as tf
+import tensorflow.contrib.layers as tcl
 from tensorflow.contrib.layers import xavier_initializer
 from sklearn.metrics import confusion_matrix
 from datetime import datetime
+import json
 
 
 def one_hot(value, dim):
@@ -44,10 +46,10 @@ class Config(object):
     learning_rate = 1e-3
 
     # others
-    batch_size = 64
+    batch_size = 128
     epochs = 20
     sequence_length = 128
-    sequence_width = 1
+    sequence_width = 2
     label_size = 11
 
     # config
@@ -57,12 +59,13 @@ class Config(object):
 class SignalModModel(object):
     def __init__(self, config, log_path, model_path):
         self.config = config
-        self.add_placeholders()
-        self.outputs = self.add_model(self.inputs)
-        self.pred = tf.argmax(tf.nn.softmax(self.outputs), axis=1)
-        self.loss = self.add_loss_op(self.outputs)
-        self.accu = self.add_accu_op(self.outputs)
-        self.train_op = self.add_train_op(self.loss)
+        with tf.device('/cpu:0'):
+            self.add_placeholders()
+            self.outputs = self.add_model(self.inputs)
+            self.pred = tf.argmax(tf.nn.softmax(self.outputs), axis=1)
+            self.loss = self.add_loss_op(self.outputs)
+            self.accu = self.add_accu_op(self.outputs)
+            self.train_op = self.add_train_op(self.loss)
 
         # add summary op
         tf.summary.scalar('accuracy', self.accu)
@@ -80,7 +83,7 @@ class SignalModModel(object):
         # gpu config
         cf = tf.ConfigProto(allow_soft_placement=True, log_device_placement=False)
         # 只占用20%的GPU内存
-        cf.gpu_options.per_process_gpu_memory_fraction = 0.2
+        cf.gpu_options.per_process_gpu_memory_fraction = 0.
         cf.gpu_options.visible_device_list = '0'
 
         # session
@@ -94,7 +97,7 @@ class SignalModModel(object):
             y = list()
             for i, line in enumerate(fr):
                 items = line.strip().split('\t')
-                signal = map(float, items[:-1])
+                signal = json.loads(items[0])
                 label = int(items[-1])
                 label = one_hot(label, self.config.label_size)
                 x.append(signal)
@@ -115,7 +118,7 @@ class SignalModModel(object):
             batch_y = list()
             for i, line in enumerate(fr):
                 items = line.strip().split('\t')
-                signal = map(float, items[:-1])
+                signal = json.loads(items[0])
                 label = int(items[-1])
                 label = one_hot(label, self.config.label_size)
                 batch_x.append(signal)
@@ -133,7 +136,7 @@ class SignalModModel(object):
     # 输入
     def add_placeholders(self):
         self.inputs = tf.placeholder(np.float32,
-                shape=[None, self.config.sequence_length],
+                shape=[None, self.config.sequence_width, self.config.sequence_length],
                 name='signal')
         self.labels = tf.placeholder(np.int32,
                 shape=[None, self.config.label_size],
@@ -255,7 +258,7 @@ class SignalModModel(object):
         for i, (batch_x, batch_y) in enumerate(self.data_iterator(datapath)):
             _, loss, acc, summary = self.sess.run([self.train_op, self.loss,
                         self.accu, self.merged_summary_op],
-                        feed_dict={self.inputs:batch_x, self.labels:batch_y})
+                        feed_dict={self.inputs:batch_x, self.labels:batch_y, self.keep_prob:0.5})
             total_batch += 1
             self.summary_writer.add_summary(summary, (epoch_no - 1) * total_batch + i)
             total_loss += loss
@@ -294,7 +297,7 @@ class SignalModModel(object):
     def predict(self, data, labels=None):
         if labels is not None:
             loss, acc, pred = self.sess.run([self.loss, self.accu, self.pred],
-                        feed_dict={self.inputs:data, self.labels:labels})
+                    feed_dict={self.inputs:data, self.labels:labels, self.keep_prob:1})
             print '***test***\nloss : {}, accu : {}'.format(loss, acc)
             print confusion_matrix(np.argmax(labels, axis=1), pred)
 
@@ -302,5 +305,5 @@ class SignalModModel(object):
 
 
 if __name__ == '__main__':
-    model = SignalModModel(Config(), '../log_{0}', '../model/model_{0}.pkg'.format(datetime.strftime(datetime.now(), '%Y%m%d%H')))
-    model.fit(datapath='../rml_data/RML2016.10a_dict_real_train.dat', test_datapath='../rml_data/RML2016.10a_dict_real_test.dat')
+    model = SignalModModel(Config(), '../log_{0}'.format(datetime.strftime(datetime.now(), '%Y%m%d%H')), '../model/model_{0}.pkg'.format(datetime.strftime(datetime.now(), '%Y%m%d%H')))
+    model.fit(datapath='../rml_data/RML2016.10a_dict.dat.train', test_datapath='../rml_data/RML2016.10a_dict.dat.test')
