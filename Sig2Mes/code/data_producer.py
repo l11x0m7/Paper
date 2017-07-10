@@ -39,13 +39,13 @@ def mixSignal(savepath, M, sample_num, *filepaths):
                 if (i+1) % 1000 == 0:
                     sys.stdout.write('\rFinish {}/{}'.format(i+1, total_signal))
                     sys.stdout.flush()
-    # os.system('shuf {} > tmp_file'.format(savepath))
-    # os.system('mv tmp_file {}'.format(savepath))
+    os.system('shuf {} > /tmp/data/tmp_file'.format(savepath))
+    os.system('mv /tmp/data/tmp_file {}'.format(savepath))
 
 
 
 if __name__ == '__main__':
-    mixSignal('../data/0dB/mix_60000.txt', 4, None,
-              '../data/0dB/2ask_20000.txt', '../data/0dB/2fsk_20000.txt',
-              '../data/0dB/qpsk_20000.txt')
+    mixSignal('../data/10dB/mix_60000.txt', 2, None,
+              '../data/10dB/2ask_20000.txt', '../data/10dB/2fsk_20000.txt',
+              '../data/10dB/bpsk_20000.txt')
 

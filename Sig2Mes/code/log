@@ -1,0 +1,54 @@
+nohup: 忽略输入
+Using TensorFlow backend.
+2017-06-20 11:34:10.639419: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use SSE4.1 instructions, but these are available on your machine and could speed up CPU computations.
+2017-06-20 11:34:10.693635: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use SSE4.2 instructions, but these are available on your machine and could speed up CPU computations.
+2017-06-20 11:34:10.693942: W tensorflow/core/platform/cpu_feature_guard.cc:45] The TensorFlow library wasn't compiled to use AVX instructions, but these are available on your machine and could speed up CPU computations.
+
+validation average symbol error rate:  0.0156468986742
+
+validation average symbol error rate:  0.0153580729167
+
+validation average symbol error rate:  0.0155107717803
+
+validation average symbol error rate:  0.0154947916667
+
+validation average symbol error rate:  0.0160890151515
+
+validation average symbol error rate:  0.0167394649621
+
+validation average symbol error rate:  0.01650390625
+
+validation average symbol error rate:  0.0161689157197
+3888 10dB 2ASK 0.0
+4022 4dB 2FSK 0.0
+4037 -8dB 2ASK 0.0581883205351
+3947 0dB 2FSK 8.70914618698e-05
+3883 -6dB 2ASK 0.0236447334535
+3986 8dB 2ASK 0.0
+3914 -2dB 2FSK 0.00110979816045
+4039 4dB 2ASK 0.0
+3955 -4dB 2FSK 0.00741150442478
+4033 -10dB 2ASK 0.106705616167
+4061 0dB BPSK 0.0
+3946 -2dB BPSK 3.95970603142e-05
+4083 2dB 2FSK 0.0
+3902 0dB 2ASK 4.00435674013e-05
+4059 6dB BPSK 0.0
+3984 6dB 2FSK 0.0
+4128 -2dB 2ASK 0.000893289728682
+4017 2dB BPSK 0.0
+3979 -6dB BPSK 0.00292944207087
+3973 10dB BPSK 0.0
+4010 -8dB 2FSK 0.0765897755611
+3979 6dB 2ASK 0.0
+4025 -8dB BPSK 0.0139673913043
+3948 -10dB BPSK 0.0393949468085
+3981 -10dB 2FSK 0.144977706606
+4100 8dB 2FSK 0.0
+3930 8dB BPSK 0.0
+3915 2dB 2ASK 0.0
+4016 -4dB BPSK 0.000404631474104
+4090 10dB 2FSK 0.0
+3952 4dB BPSK 0.0
+4104 -6dB 2FSK 0.0297803971735
+4114 -4dB 2ASK 0.00612238697132

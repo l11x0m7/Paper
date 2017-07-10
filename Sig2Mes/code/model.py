@@ -1,4 +1,5 @@
 # -*- encoding=utf8 -*-
+
 import os
 import sys
 import tensorflow as tf
@@ -8,7 +9,7 @@ from keras.utils.test_utils import keras_test
 from keras.layers import Recurrent
 from keras.layers import Input, Dense, Dropout, Conv2D, MaxPool2D, Reshape, RepeatVector
 from keras.layers import Lambda, TimeDistributed, Bidirectional, BatchNormalization, Activation, ZeroPadding2D
-from keras.layers import Concatenate
+from keras.layers import Concatenate, Flatten
 from keras.activations import relu, softmax
 from keras.models import Model, Sequential
 from recurrentshop import RecurrentSequential, LSTMCell
@@ -21,6 +22,20 @@ import json
 
 from cells import LSTMDecoderCell, AttentionDecoderCell
 from utils import *
+from keras import backend as K
+
+
+def selu(x):
+    """Scaled Exponential Linear Unit. (Klambauer et al., 2017)
+    # Arguments
+        x: A tensor or variable to compute the activation function for.
+    # References
+        - [Self-Normalizing Neural Networks](https://arxiv.org/abs/1706.02515)
+    """
+    alpha = 1.6732632423543772848170429916717
+    scale = 1.0507009873554804934193349852946
+    return scale * K.elu(x, alpha)
+
 
 def SimpleSeq2Seq(output_dim, output_length, hidden_dim=None, input_shape=None,
                   batch_size=None, batch_input_shape=None, input_dim=None,
@@ -271,10 +286,10 @@ def MixSignalDecoder(input_shape, filter_num, kernel_size, strides, label_size, 
     signal_type = Input(shape=signal_type_shape)
     conv1Output = Conv2D(filters=filter_num, kernel_size=kernel_size,
                          strides=strides)(input)
-    reshapeOutput = Reshape([conv1Output.get_shape().as_list()[1],
+    conv1Output = Reshape([conv1Output.get_shape().as_list()[1],
                              conv1Output.get_shape().as_list()[3]])(conv1Output)
-    conv1Output = BatchNormalization()(reshapeOutput)
-    conv1Output = Activation('relu')(conv1Output)
+    # conv1Output = BatchNormalization()(reshapeOutput)
+    conv1Output = Activation('selu')(conv1Output)
     conv1Output = Dropout(dropout)(conv1Output)
     conv1Output = Concatenate(axis=-1)([conv1Output,
                                         RepeatVector(conv1Output.get_shape().as_list()[1])(signal_type)])
@@ -285,8 +300,8 @@ def MixSignalDecoder(input_shape, filter_num, kernel_size, strides, label_size, 
                          strides=[2, 1])(conv2Output)
     conv2Output = Reshape([conv2Output.get_shape().as_list()[1],
                            conv2Output.get_shape().as_list()[3]])(conv2Output)
-    conv2Output = BatchNormalization()(conv2Output)
-    conv2Output = Activation('relu')(conv2Output)
+    # conv2Output = BatchNormalization()(conv2Output)
+    conv2Output = Activation('selu')(conv2Output)
     conv2Output = Dropout(dropout)(conv2Output)
     conv2Output = Concatenate(axis=-1)([conv2Output,
                                         RepeatVector(conv2Output.get_shape().as_list()[1])(signal_type)])
@@ -295,50 +310,75 @@ def MixSignalDecoder(input_shape, filter_num, kernel_size, strides, label_size, 
     return Model([input, signal_type], conv2Output)
 
 
-def DeeperCNN(input_shape, filter_num, kernel_size, strides, label_size, dropout=0.0):
-    """
-    Now is not available
-
-    :param input_shape:
-    :param filter_num:
-    :param kernel_size:
-    :param strides:
-    :param label_size:
-    :param dropout:
-    :return:
-    """
+def SymbolDemodulator(input_shape, filter_num, label_size, signal_type_shape, dropout=0.0):
     input = Input(shape=input_shape)
-    conv1Output = Conv2D(filters=filter_num, kernel_size=kernel_size,
-                         strides=strides)(input)
-    reshapeOutput = Reshape([conv1Output.get_shape().as_list()[1],
-                             conv1Output.get_shape().as_list()[3]])(conv1Output)
-    conv1Output = BatchNormalization()(reshapeOutput)
-    conv1Output = Activation('relu')(conv1Output)
-    conv1Output = Dropout(dropout)(conv1Output)
-    conv1Output = Reshape([conv1Output.get_shape().as_list()[1],
-                           conv1Output.get_shape().as_list()[2], 1])(conv1Output)
-    conv2Output = Conv2D(filters=filter_num/2, kernel_size=[9, filter_num],
-                         strides=[5, 1])(conv1Output)
-    conv2Output = Reshape([conv2Output.get_shape().as_list()[1],
-                           conv2Output.get_shape().as_list()[3]])(conv2Output)
-    conv2Output = BatchNormalization()(conv2Output)
-    conv2Output = Activation('relu')(conv2Output)
-    conv2Output = Dropout(dropout)(conv2Output)
-    conv2Output = Reshape([conv2Output.get_shape().as_list()[1],
-                           conv2Output.get_shape().as_list()[2], 1])(conv2Output)
-    conv3Output = ZeroPadding2D((1, 0))(conv2Output)
-    conv3Output = Conv2D(filters=filter_num/4, kernel_size=[3, filter_num/2],
-                         strides=[2, 1])(conv3Output)
-    conv3Output = Reshape([conv3Output.get_shape().as_list()[1],
-                           conv3Output.get_shape().as_list()[3]])(conv3Output)
-    conv3Output = BatchNormalization()(conv3Output)
-    conv3Output = Activation('relu')(conv3Output)
-    conv3Output = Dropout(dropout)(conv3Output)
-    conv3Output = TimeDistributed(Dense(filter_num/4, activation=relu))(conv3Output)
-    conv3Output = TimeDistributed(Dense(label_size, activation=softmax))(conv3Output)
-    return Model(input, conv3Output)
+    signal_type = Input(shape=signal_type_shape)
+    kernel_sizes = [(3, 1), (16, 1)]
+    kernel2_sizes = [4, 3]
+    all_strides = [1, 2]
+    outputs = list()
+    for kernel_size, kernel2_size, strides in zip(kernel_sizes, kernel2_sizes, all_strides):
+        conv1Output = Conv2D(filters=filter_num, kernel_size=kernel_size,
+                             strides=strides)(input)
+        conv1Output = Reshape([conv1Output.get_shape().as_list()[1],
+                                 conv1Output.get_shape().as_list()[3]])(conv1Output)
+        # conv1Output = BatchNormalization()(conv1Output)
+        conv1Output = Activation('selu')(conv1Output)
+        conv1Output = Dropout(dropout)(conv1Output)
+        conv1Output = Concatenate(axis=-1)([conv1Output,
+                    RepeatVector(conv1Output.get_shape().as_list()[1])(signal_type)])
+        conv1Output = Reshape([conv1Output.get_shape().as_list()[1],
+                               conv1Output.get_shape().as_list()[2], 1])(conv1Output)
+        conv2Output = Conv2D(filters=filter_num / 2, kernel_size=[kernel2_size, conv1Output.get_shape().as_list()[2]],
+                             strides=[2, 1])(conv1Output)
+        conv2Output = Reshape([conv2Output.get_shape().as_list()[1],
+                               conv2Output.get_shape().as_list()[3], 1])(conv2Output)
+        # conv2Output = BatchNormalization()(conv2Output)
+        conv2Output = Activation('selu')(conv2Output)
+        pooling1Output = MaxPool2D((2, 1))(conv2Output)
+        pooling1Output = Flatten()(pooling1Output)
+        dropout2Output = Dropout(dropout)(pooling1Output)
+        output = Dense(16, activation=relu)(dropout2Output)
+        outputs.append(output)
+
+    outputs.append(signal_type)
+    output = Concatenate(axis=-1)(outputs)
+    output = Dense(label_size, activation=softmax)(output)
+    return Model([input, signal_type], output)
 
 
+def MixSymbolDemodulator(input_shape, filter_num, label_size, signal_type_shape, dropout=0.0):
+    input = Input(shape=input_shape)
+    signal_type = Input(shape=signal_type_shape)
+    kernel_sizes = [(3, 1), (16, 1)]
+    kernel2_sizes = [4, 3]
+    all_strides = [1, 2]
+    outputs = list()
+    for kernel_size, kernel2_size, strides in zip(kernel_sizes, kernel2_sizes, all_strides):
+        conv1Output = Conv2D(filters=filter_num, kernel_size=kernel_size,
+                             strides=strides)(input)
+        conv1Output = Reshape([conv1Output.get_shape().as_list()[1],
+                                 conv1Output.get_shape().as_list()[3]])(conv1Output)
+        # conv1Output = BatchNormalization()(conv1Output)
+        conv1Output = Activation('selu')(conv1Output)
+        conv1Output = Dropout(dropout)(conv1Output)
+        conv1Output = Concatenate(axis=-1)([conv1Output,
+                    RepeatVector(conv1Output.get_shape().as_list()[1])(signal_type)])
+        conv1Output = Reshape([conv1Output.get_shape().as_list()[1],
+                               conv1Output.get_shape().as_list()[2], 1])(conv1Output)
+        conv2Output = Conv2D(filters=filter_num / 2, kernel_size=[kernel2_size, conv1Output.get_shape().as_list()[2]],
+                             strides=[2, 1])(conv1Output)
+        conv2Output = Reshape([conv2Output.get_shape().as_list()[1],
+                               conv2Output.get_shape().as_list()[3], 1])(conv2Output)
+        # conv2Output = BatchNormalization()(conv2Output)
+        conv2Output = Activation('selu')(conv2Output)
+        pooling1Output = MaxPool2D((2, 1))(conv2Output)
+        pooling1Output = Flatten()(pooling1Output)
+        dropout2Output = Dropout(dropout)(pooling1Output)
+        output = Dense(16, activation=relu)(dropout2Output)
+        outputs.append(output)
 
-
-
+    outputs.append(signal_type)
+    output = Concatenate(axis=-1)(outputs)
+    output = Dense(label_size, activation=softmax)(output)
+    return Model([input, signal_type], output)
