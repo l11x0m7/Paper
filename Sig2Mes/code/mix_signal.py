@@ -166,7 +166,7 @@ def mixSymbolTest(filepath, M, sample_num):
 
 if __name__ == '__main__':
     # mixSignalTest('../data/mix_data/mix_-10_20_210000.txt', 2, None)
-    mixSymbolTest('../data/mix_data/mix_-10_20_210000.txt', 2, None)
+    mixSymbolTest('../data/mix_data/mix_-10_20_4200.txt', 2, None)
     # args = sys.argv
     # filepath = args[1]
     # mixSignalTest(filepath, 4, 3, None)

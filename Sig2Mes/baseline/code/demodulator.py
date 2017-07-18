@@ -187,21 +187,26 @@ def test_mix_signals():
         st_list = list()
         compare_models = ''
 
-        # for i, st in enumerate(res):
-        #     st_label = 'Correlation Demodulation of ' + st
-        #     if i == 0:
-        #         if compare_models == '':
-        #             compare_models += 'correlation demodulation'
-        #         else:
-        #             compare_models += ' and correlation demodulation'
-        #     st_list.append(st_label)
-        #     snr2ser = dict()
-        #     for snr in res[st]:
-        #         ser = res[st][snr][0] / float(res[st][snr][1])
-        #         snr2ser[snr] = ser
-        #         print('{}\t{}\t{}'.format(st, snr, ser))
-        #     sers = zip(*sorted(snr2ser.iteritems(), key=lambda k:k[0]))[1]
-        #     plt.semilogy(range(-10, 25, 5), sers, label=st_label)
+        for i, st in enumerate(res):
+            if st == '2ASK':
+                st_label = 'correlation demodulation of ' + 'BASK'
+            elif st == '2FSK':
+                st_label = 'correlation demodulation of ' + 'BFSK'
+            else:
+                st_label = 'correlation demodulation of ' + st
+            if i == 0:
+                if compare_models == '':
+                    compare_models += 'correlation demodulation'
+                else:
+                    compare_models += ' and correlation demodulation'
+            st_list.append(st_label)
+            snr2ser = dict()
+            for snr in res[st]:
+                ser = res[st][snr][0] / float(res[st][snr][1])
+                snr2ser[snr] = ser
+                print('{}\t{}\t{}'.format(st, snr, ser))
+            sers = zip(*sorted(snr2ser.iteritems(), key=lambda k:k[0]))[1]
+            plt.semilogy(range(-10, 25, 5), sers, ms=8, marker='*', lw=2, ls='-.', label=st_label)
 
         # 模型结果（sequential model）
         signal_model_snr = """
@@ -263,7 +268,12 @@ BPSK	-5.0	0.191598746082
             symbol_st_snr[items[0]].append((float(items[1]), float(items[2])))
 
         for i, st in enumerate(sequential_st_snr):
-            st_label = 'Sequential Model Demodulation of ' + st
+            if st == '2ASK':
+                st_label = 'sequential demodulation of ' + 'BASK'
+            elif st == '2FSK':
+                st_label = 'sequential demodulation of ' + 'BFSK'
+            else:
+                st_label = 'sequential demodulation of ' + st
             st_list.append(st_label)
             if i == 0:
                 if compare_models == '':
@@ -271,21 +281,31 @@ BPSK	-5.0	0.191598746082
                 else:
                     compare_models += ' and sequential model demodulation'
             sers = zip(*sorted(sequential_st_snr[st], key=lambda k: k[0]))[1]
-            plt.semilogy(range(-10, 25, 5), sers, label=st_label)
+            plt.semilogy(range(-10, 25, 5), sers, ms=6, marker='s', lw=2, ls='--', label=st_label)
 
         for i, st in enumerate(symbol_st_snr):
+            if st == '2ASK':
+                st_label = 'symbolic demodulation of ' + 'BASK'
+            elif st == '2FSK':
+                st_label = 'symbolic demodulation of ' + 'BFSK'
+            else:
+                st_label = 'symbolic demodulation of ' + st
             if i == 0:
-                st_label = 'Symbolic Model Demodulation of ' + st
                 if compare_models == '':
                     compare_models += 'symbolic model demodulation'
                 else:
                     compare_models += ' and symbolic model demodulation'
             st_list.append(st_label)
             sers = zip(*sorted(symbol_st_snr[st], key=lambda k: k[0]))[1]
-            plt.semilogy(range(-10, 25, 5), sers, label=st_label)
+            plt.semilogy(range(-10, 25, 5), sers, ms=6, marker='o', lw=2, label=st_label)
 
         # for i, st in enumerate(symbol_st_snr):
-        #     st_label = 'Combined Model Demodulation of ' + st
+        #     if st == '2ASK':
+        #         st_label = 'combined demodulation of ' + 'BASK'
+        #     elif st == '2FSK':
+        #         st_label = 'combined demodulation of ' + 'BFSK'
+        #     else:
+        #         st_label = 'combined demodulation of ' + st
         #     if i == 0:
         #         if compare_models == '':
         #             compare_models += 'combined model demodulation'
@@ -297,14 +317,15 @@ BPSK	-5.0	0.191598746082
         #     combined_sers = [min(symbolic_ser, sequential_ser)
         #                      for (symbolic_ser, sequential_ser) in
         #                      zip(sequential_sers, symbolic_sers)]
-        #     plt.semilogy(range(-10, 25, 5), combined_sers, label=st_label)
+        #     plt.semilogy(range(-10, 25, 5), combined_sers, ms=6, marker='v', lw=2, ls=':', label=st_label)
 
-        plt.xticks(range(-10, 25, 5))
-        plt.xlabel('[SNR(dB), Actual SNR(dB)]')
-        plt.ylabel('SER')
-        plt.title('SER comparison of {} for composite signals \n'
-                  'modulated with BPSK, 2ASK and 2FSK respectively'.format(compare_models))
-        plt.legend(labels=st_list)
+        plt.xticks(range(-10, 25, 5), fontsize=16)
+        plt.yticks(fontsize=16)
+        plt.xlabel('[fake signal-to-noise ratio(dB), actual signal-to-noise ratio(dB)]', fontsize=20)
+        plt.ylabel('bit error ratio', fontsize=20)
+        # plt.title('BER comparison of {} for composite signals \n'
+        #           'modulated with BPSK, BASK and BFSK respectively'.format(compare_models))
+        plt.legend(labels=st_list, fontsize=16)
         plt.show()
 
 

@@ -280,50 +280,52 @@ def drawSERCurve():
             compare_models += 'sequential model demodulation'
         else:
             compare_models += ' and sequential model demodulation'
-        total_labels.append('Sequential Model Demodulation of BPSK')
-        total_labels.append('Sequential Model Demodulation of 2ASK')
-        total_labels.append('Sequential Model Demodulation of 2FSK')
-        plt.semilogy(*zip(*signal_type_ser['BPSK']),label='Sequential Model Demodulation of BPSK')
-        plt.semilogy(*zip(*signal_type_ser['2ASK']),label='Sequential Model Demodulation of 2ASK')
-        plt.semilogy(*zip(*signal_type_ser['2FSK']),label='Sequential Model Demodulation of 2FSK')
+        total_labels.append('sequential model demodulation of BPSK')
+        total_labels.append('sequential model demodulation of BASK')
+        total_labels.append('sequential model demodulation of BFSK')
+        plt.semilogy(*zip(*signal_type_ser['BPSK']), ms=6, marker='s', lw=2, ls='--', label='sequential model demodulation of BPSK')
+        plt.semilogy(*zip(*signal_type_ser['2ASK']), ms=6, marker='s', lw=2, ls='--', label='sequential model demodulation of BASK')
+        plt.semilogy(*zip(*signal_type_ser['2FSK']), ms=6, marker='s', lw=2, ls='--', label='sequential model demodulation of BFSK')
     if 1:
         if compare_models == '':
             compare_models += 'symbolic model demodulation'
         else:
             compare_models += ' and symbolic model demodulation'
-        total_labels.append('Symbolic Model Demodulation of BPSK')
-        total_labels.append('Symbolic Model Demodulation of 2ASK')
-        total_labels.append('Symbolic Model Demodulation of 2FSK')
-        plt.semilogy(*zip(*symbol_type_ser['BPSK']),label='Symbolic Model Demodulation of BPSK')
-        plt.semilogy(*zip(*symbol_type_ser['2ASK']),label='Symbolic Model Demodulation of 2ASK')
-        plt.semilogy(*zip(*symbol_type_ser['2FSK']),label='Symbolic Model Demodulation of 2FSK')
+        total_labels.append('symbolic model demodulation of BPSK')
+        total_labels.append('symbolic model demodulation of BASK')
+        total_labels.append('symbolic model demodulation of BFSK')
+        plt.semilogy(*zip(*symbol_type_ser['BPSK']), ms=6, marker='o', lw=2, label='symbolic model demodulation of BPSK')
+        plt.semilogy(*zip(*symbol_type_ser['2ASK']), ms=6, marker='o', lw=2, label='symbolic model demodulation of BASK')
+        plt.semilogy(*zip(*symbol_type_ser['2FSK']), ms=6, marker='o', lw=2,  label='symbolic model demodulation of BFSK')
     if 0:
         if compare_models == '':
             compare_models += 'combined model demodulation'
         else:
             compare_models += ' and combined model demodulation'
-        total_labels.append('Combined Model Demodulation of BPSK')
-        total_labels.append('Combined Model Demodulation of 2ASK')
-        total_labels.append('Combined Model Demodulation of 2FSK')
-        plt.semilogy(*zip(*combined_type_ser['BPSK']),label='Combined Model Demodulation of BPSK')
-        plt.semilogy(*zip(*combined_type_ser['2ASK']),label='Combined Model Demodulation of 2ASK')
-        plt.semilogy(*zip(*combined_type_ser['2FSK']),label='Combined Model Demodulation of 2FSK')
-    if 0:
+        total_labels.append('combined model demodulation of BPSK')
+        total_labels.append('combined model demodulation of BASK')
+        total_labels.append('combined model demodulation of BFSK')
+        plt.semilogy(*zip(*combined_type_ser['BPSK']), ms=6, marker='v', lw=2, ls=':', label='combined model demodulation of BPSK')
+        plt.semilogy(*zip(*combined_type_ser['2ASK']), ms=6, marker='v', lw=2, ls=':', label='combined model demodulation of BASK')
+        plt.semilogy(*zip(*combined_type_ser['2FSK']), ms=6, marker='v', lw=2, ls=':', label='combined model demodulation of BFSK')
+    if 1:
         if compare_models == '':
             compare_models += 'correlation demodulation'
         else:
             compare_models += ' and correlation demodulation'
-        total_labels.append('Correlation Demodulation of BPSK')
-        total_labels.append('Correlation Demodulation of 2ASK')
-        total_labels.append('Correlation Demodulation of 2FSK')
-        plt.semilogy(range(-10, 12, 2), target_bpsk, label='Correlation Demodulation of BPSK')
-        plt.semilogy(range(-10, 12, 2), target_2ask, label='Correlation Demodulation of 2ASK')
-        plt.semilogy(range(-10, 12, 2), target_2fsk, label='Correlation Demodulation of 2FSK')
-    plt.xlabel('SNR(dB)')
-    plt.ylabel('SER')
-    plt.title('SER comparison of {} for modulated signals \n'
-              'with BPSK, 2ASK and 2FSK respectively'.format(compare_models))
-    plt.legend(labels=total_labels)
+        total_labels.append('correlation demodulation of BPSK')
+        total_labels.append('correlation demodulation of BASK')
+        total_labels.append('correlation demodulation of BFSK')
+        plt.semilogy(range(-10, 12, 2), target_bpsk, ms=8, marker='*', lw=2, ls='-.', label='correlation demodulation of BPSK')
+        plt.semilogy(range(-10, 12, 2), target_2ask, ms=8, marker='*', lw=2, ls='-.', label='correlation demodulation of BASK')
+        plt.semilogy(range(-10, 12, 2), target_2fsk, ms=8, marker='*', lw=2, ls='-.', label='correlation demodulation of BFSK')
+    plt.xticks(fontsize=16)
+    plt.yticks(fontsize=16)
+    plt.xlabel('signal-to-noise ratio(dB)', fontsize=20)
+    plt.ylabel('bit error ratio', fontsize=20)
+    # plt.title('BER comparison of {} for modulated signals \n'
+    #           'with BPSK, BASK and BFSK respectively'.format(compare_models))
+    plt.legend(labels=total_labels, fontsize=16)
     plt.show()
 
 
